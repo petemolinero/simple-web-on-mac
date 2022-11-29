@@ -4,4 +4,4 @@
 web/**
 database/current/**
 database/fresh/**
-nginx/certs/**
+nginx/certs/*.pem

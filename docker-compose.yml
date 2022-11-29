@@ -1,0 +1,62 @@
+version: '3.9'
+
+networks:
+  web:
+    driver: bridge
+
+volumes:
+  code:
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./docker/nginx.dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - code:/var/www/html
+    depends_on:
+      - php
+      - database
+    networks:
+      - web
+  database:
+    image: mysql:latest
+    command: ['mysqld', '--default-authentication-plugin=mysql_native_password']
+    env_file: .env
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=mb
+      - MYSQL_USER=pete
+      - MYSQL_PASSWORD=password
+    ports:
+      - 127.0.0.1:3306:3306
+    volumes:
+      - ./database/current:/var/lib/mysql:cached
+      - ./database/fresh:/docker-entrypoint-initdb.d
+    networks:
+      - web
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/php.dockerfile
+    volumes:
+      - code:/var/www/html
+      - ./docker/log.conf:/usr/local/etc/php-fpm.d/zz-log.conf
+    networks:
+      - web
+x-mutagen:
+  sync:
+    defaults:
+      ignore:
+        vcs: true
+    code:
+      alpha: "./app"
+      beta: "volume://code"
+      mode: "two-way-resolved"
+      permissions:
+        defaultFileMode: 0o666
+        defaultDirectoryMode: 0o777
+

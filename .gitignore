@@ -1,0 +1,7 @@
+.env
+*.sublime-workspace
+*.yml.lock
+web/**
+database/current/**
+database/fresh/**
+nginx/certs/**

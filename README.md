@@ -1,4 +1,4 @@
-# Docker Development Environment for WordPress
+# Simple Web Development Environment Using Docker Compose
 
 ## Overview
 The Docker development environment consists of four parts:
